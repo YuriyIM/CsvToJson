@@ -28,38 +28,62 @@ public class Main {
         String json = listToJson(list);
         writeString(json, "data.json");
 
-//        List<Employee> list2 = parseXML("data.xml");
-//        String json2 = listToJson(list2);
-//        writeString(json2, "data2.json");
+        List<Employee> list2 = parseXML("data.xml");
+        String json2 = listToJson(list2);
+        writeString(json2, "data2.json");
 
     }
 
-//    private static List<Employee> parseXML(String s) throws ParserConfigurationException, IOException, SAXException {
-//        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//        DocumentBuilder builder = factory.newDocumentBuilder();
-//        Document doc = builder.parse(new File(s));
-//        Node root = doc.getDocumentElement();
-//        String[] employeeString = read(root);
-//        System.out.println(employeeString);
-//        List<Employee> employees = new ArrayList<>();
-//        return employees;
-//    }
 
-//    private static String[] read(Node node) {
-//        NodeList nodeList = node.getChildNodes();
-//        for (int i = 0; i < nodeList.getLength(); i++) {
-//            Node node_ = nodeList.item(i);
-//            if (Node.ELEMENT_NODE == node_.getNodeType()) {
-//                Element element = (Element) node_;
-//                NamedNodeMap map = element.getAttributes();
-//                for (int a = 0; a < map.getLength(); a++) {
-//                    String attrName = map.item(a).getNodeName();
-//                    String attrValue = map.item(a).getNodeValue();
-//                }
-//                read(node_);
-//            }
-//        }
-//    }
+    private static List<Employee> parseXML(String s) throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new File(s));
+        Node root = doc.getDocumentElement();
+
+        ArrayList<String> employeeString = read(root);
+
+        long id1 = Long.parseLong(employeeString.get(3));
+        String firstName1 = employeeString.get(2);
+        String lastName1 = employeeString.get(4);
+        String country1 = employeeString.get(1);
+        int age1 = Integer.parseInt(employeeString.get(0));
+
+        long id2 = Long.parseLong(employeeString.get(8));
+        String firstName2 = employeeString.get(7);
+        String lastName2 = employeeString.get(9);
+        String country2 = employeeString.get(6);
+        int age2 = Integer.parseInt(employeeString.get(5));
+
+        Employee employee1 = new Employee(id1, firstName1, lastName1, country1, age1);
+        Employee employee2 = new Employee(id2, firstName2, lastName2, country2, age2);
+
+        List<Employee> employees = new ArrayList<>();
+        employees.add(employee1);
+        employees.add(employee2);
+
+        return employees;
+    }
+
+    private static ArrayList<String> read(Node node) {
+        NodeList nodeList = node.getChildNodes();
+        ArrayList<String> employeesString = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node_ = nodeList.item(i);
+            if (Node.ELEMENT_NODE == node_.getNodeType()) {
+                Element element = (Element) node_;
+                NamedNodeMap map = element.getAttributes();
+                for (int a = 0; a < map.getLength(); a++) {
+                    String attrName = map.item(a).getNodeName();
+                    String attrValue = map.item(a).getNodeValue();
+                    System.out.println(attrName + " " + attrValue);
+                    employeesString.add(attrValue);
+                }
+                read(node_);
+            }
+        }
+        return employeesString;
+    }
 
     private static void writeString(String json, String fileName) {
         try (FileWriter file = new FileWriter(fileName)) {
