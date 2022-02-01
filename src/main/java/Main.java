@@ -28,7 +28,9 @@ public class Main {
         String json = listToJson(list);
         writeString(json, "data.json");
 
-        List<Employee> list2 = parseXML("data.xml");
+        String fileName2 = "data.xml";
+
+        List<Employee> list2 = parseXML(fileName2);
         String json2 = listToJson(list2);
         writeString(json2, "data2.json");
 
@@ -41,48 +43,38 @@ public class Main {
         Document doc = builder.parse(new File(s));
         Node root = doc.getDocumentElement();
 
-        ArrayList<String> employeeString = read(root);
-
-        long id1 = Long.parseLong(employeeString.get(3));
-        String firstName1 = employeeString.get(2);
-        String lastName1 = employeeString.get(4);
-        String country1 = employeeString.get(1);
-        int age1 = Integer.parseInt(employeeString.get(0));
-
-        long id2 = Long.parseLong(employeeString.get(8));
-        String firstName2 = employeeString.get(7);
-        String lastName2 = employeeString.get(9);
-        String country2 = employeeString.get(6);
-        int age2 = Integer.parseInt(employeeString.get(5));
-
-        Employee employee1 = new Employee(id1, firstName1, lastName1, country1, age1);
-        Employee employee2 = new Employee(id2, firstName2, lastName2, country2, age2);
-
-        List<Employee> employees = new ArrayList<>();
-        employees.add(employee1);
-        employees.add(employee2);
-
-        return employees;
+        return read(root);
     }
 
-    private static ArrayList<String> read(Node node) {
+    private static List<Employee> read(Node node) {
+
         NodeList nodeList = node.getChildNodes();
-        ArrayList<String> employeesString = new ArrayList<>();
+
+        ArrayList<Employee> employees = new ArrayList<>();
+
         for (int i = 0; i < nodeList.getLength(); i++) {
+
             Node node_ = nodeList.item(i);
+
             if (Node.ELEMENT_NODE == node_.getNodeType()) {
                 Element element = (Element) node_;
                 NamedNodeMap map = element.getAttributes();
+                ArrayList<String> dataEmployee = new ArrayList<>();
                 for (int a = 0; a < map.getLength(); a++) {
                     String attrName = map.item(a).getNodeName();
                     String attrValue = map.item(a).getNodeValue();
-                    System.out.println(attrName + " " + attrValue);
-                    employeesString.add(attrValue);
+                    dataEmployee.add(attrValue);
                 }
+                long id = Long.parseLong(dataEmployee.get(3));
+                String firstName = dataEmployee.get(2);
+                String lastName = dataEmployee.get(4);
+                String country = dataEmployee.get(1);
+                int age = Integer.parseInt(dataEmployee.get(0));
+                employees.add(new Employee(id, firstName, lastName, country, age));
                 read(node_);
             }
         }
-        return employeesString;
+        return employees;
     }
 
     private static void writeString(String json, String fileName) {
